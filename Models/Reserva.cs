@@ -1,4 +1,18 @@
-﻿using System;
+﻿// *****************************************************
+// Examen2 – Clase Reserva
+// Kenneth Andrés Pantoja Manobanda
+// Santiago Pila
+// Fecha: 30/07/2025
+//
+// RESULTADOS
+// - Se creó la entidad Reserva con propiedades para usuario, espacio y fechas.
+// - Se aplicaron [Required] y [ForeignKey] para validar y relacionar entidades.
+//
+// CONCLUSIONES
+// - La clase permite gestionar reservas con control de estados.
+// - La relación con Usuario y Espacio facilita la integración con Entity Framework.
+// *****************************************************
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
