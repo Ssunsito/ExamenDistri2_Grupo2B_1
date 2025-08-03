@@ -1,0 +1,86 @@
+﻿@model List<ProyectoDistri2.Models.Reserva>
+@{
+    ViewBag.Title = "Historial de Reservas";
+    var espacios = ViewBag.Espacios as List<ProyectoDistri2.Models.Espacio>;
+}
+
+<h2>Historial de Reservas</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<!-- 🔹 Filtros de búsqueda -->
+<div class="mb-3">
+    <label>Desde:</label>
+    <input type="date" id="fechaInicio" class="form-control d-inline w-auto mx-2" />
+
+    <label>Hasta:</label>
+    <input type="date" id="fechaFin" class="form-control d-inline w-auto mx-2" />
+
+    <label>Estado:</label>
+    <select id="estado" class="form-control d-inline w-auto mx-2">
+        <option value="">Todos</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Aprobada">Aprobada</option>
+        <option value="Rechazada">Rechazada</option>
+    </select>
+
+    <label>Espacio:</label>
+    <select id="espacioId" class="form-control d-inline w-auto mx-2">
+        <option value="">Todos</option>
+        @foreach (var e in espacios)
+        {
+            <option value="@e.Id">@e.Nombre (@e.Tipo)</option>
+        }
+    </select>
+
+    <button id="btnFiltrar" class="btn btn-primary mx-2">Filtrar</button>
+    <button id="btnExportar" class="btn btn-success mx-2">Exportar a Excel</button>
+</div>
+
+<!-- 🔹 Contenedor dinámico para la tabla -->
+<div id="tablaHistorial">
+    @Html.Partial("_HistorialTabla", Model)
+</div>
+
+@section scripts {
+    <script>
+    // 🔹 Cargar historial vía AJAX
+    function cargarHistorial(page = 1) {
+        $.ajax({
+            url: '@Url.Action("FiltrarHistorial", "Reservas")',
+            type: 'GET',
+            data: {
+                fechaInicio: $("#fechaInicio").val(),
+                fechaFin: $("#fechaFin").val(),
+                estado: $("#estado").val(),
+                espacioId: $("#espacioId").val(),
+                page: page
+            },
+            success: function(result) {
+                $("#tablaHistorial").html(result);
+            },
+            error: function() {
+                alert("Ocurrió un error al filtrar el historial.");
+            }
+        });
+    }
+
+    // 🔹 Evento click para el botón Filtrar
+    $("#btnFiltrar").click(function() {
+        cargarHistorial(1); // Reiniciar en la primera página
+    });
+
+    // 🔹 Llamado desde la paginación dinámica
+    function cambiarPagina(page) {
+        cargarHistorial(page);
+    }
+
+    // 🔹 Exportar historial a Excel
+    $("#btnExportar").click(function () {
+        window.location.href = '@Url.Action("ExportarHistorialExcel", "Reservas")';
+    });
+    </script>
+}

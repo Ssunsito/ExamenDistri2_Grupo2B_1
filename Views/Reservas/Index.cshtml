@@ -1,0 +1,44 @@
+﻿@model List<ProyectoDistri2.Models.Espacio>
+
+@{
+    ViewBag.Title = "Espacios Disponibles";
+}
+
+<h2>Espacios Disponibles</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+<p>
+    @Html.ActionLink("Mi Historial de Reservas", "Historial", "Reservas", null, new { @class = "btn btn-info" })
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var espacio in Model)
+        {
+            <tr>
+                <td>@espacio.Id</td>
+                <td>@espacio.Nombre</td>
+                <td>@espacio.Tipo</td>
+                <td>
+                    @Html.ActionLink(
+                        "Reservar",       // Texto del botón
+                        "Crear",          // Acción
+                        new { espacioId = espacio.Id }, // Parámetro
+                        new { @class = "btn btn-primary" } // CSS
+                    )
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

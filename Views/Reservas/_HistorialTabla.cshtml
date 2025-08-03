@@ -1,0 +1,46 @@
+﻿@model List<ProyectoDistri2.Models.Reserva>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Espacio</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Id</td>
+                <td>@(r.Espacio?.Nombre) (@(r.Espacio?.Tipo))</td>
+                <td>@r.FechaInicio.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@r.FechaFin.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@r.Estado</td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="5" class="text-center text-muted">No hay reservas con los filtros seleccionados.</td></tr>
+        }
+    </tbody>
+</table>
+
+
+<!-- 🔹 Paginación AJAX -->
+@if (ViewBag.TotalRegistros > ViewBag.PageSize)
+{
+    int totalPaginas = (int)Math.Ceiling((decimal)ViewBag.TotalRegistros / ViewBag.PageSize);
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= totalPaginas; i++)
+            {
+                <li class="page-item @(ViewBag.Page == i ? "active" : "")">
+                    <a class="page-link" href="#" onclick="cambiarPagina(@i); return false;">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

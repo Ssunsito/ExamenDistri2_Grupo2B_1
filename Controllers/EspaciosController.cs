@@ -7,9 +7,9 @@ using System.Net;
 
 namespace ProyectoDistri2.WebAPI.Controllers
 {
-    [Authorize(Roles = "Admin,Coordinador")]
+    [Authorize]
     [RoutePrefix("api/espacios")]
-    public class EspacioController : ApiController
+    public class EspaciosController : ApiController
     {
         private readonly GestorReserva db = new GestorReserva();
 

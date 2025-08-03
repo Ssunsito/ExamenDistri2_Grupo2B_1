@@ -1,0 +1,111 @@
+﻿@model List<ProyectoDistri2.Models.Reserva>
+@{
+    ViewBag.Title = "Panel Coordinador";
+    var espacios = ViewBag.Espacios as List<ProyectoDistri2.Models.Espacio>;
+}
+
+<h2>Panel de Coordinador</h2>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="reservas-tab" data-bs-toggle="tab" href="#reservas" role="tab">Reservas Pendientes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="espacios-tab" data-bs-toggle="tab" href="#espacios" role="tab">Espacios</a>
+    </li>
+</ul>
+
+<div class="tab-content mt-3">
+    <!-- 🔹 Reservas Pendientes -->
+    <div class="tab-pane fade show active" id="reservas" role="tabpanel">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Espacio</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.Id</td>
+                        <td>@(r.Usuario?.Nombre)</td>
+                        <td>@(r.Espacio?.Nombre) (@(r.Espacio?.Tipo))</td>
+                        <td>@r.FechaInicio.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@r.FechaFin.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="aprobarReserva(@r.Id)">Aprobar</button>
+                            <button class="btn btn-danger btn-sm" onclick="rechazarReserva(@r.Id)">Rechazar</button>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted">No hay reservas pendientes</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 🔹 Lista de Espacios -->
+    <div class="tab-pane fade" id="espacios" role="tabpanel">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in espacios)
+                {
+                    <tr>
+                        <td>@e.Id</td>
+                        <td>@e.Nombre</td>
+                        <td>@e.Tipo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+    function aprobarReserva(id) {
+        $.ajax({
+            url: 'https://localhost:44398/api/reservas/aprobar/' + id,
+            type: 'PUT',
+            headers: { 'Authorization': 'Bearer @Session["Token"]' },
+            success: function() {
+                alert("Reserva aprobada");
+                location.reload();
+            },
+            error: function() {
+                alert("Error al aprobar la reserva");
+            }
+        });
+    }
+
+    function rechazarReserva(id) {
+        $.ajax({
+            url: 'https://localhost:44398/api/reservas/rechazar/' + id,
+            type: 'PUT',
+            headers: { 'Authorization': 'Bearer @Session["Token"]' },
+            success: function() {
+                alert("Reserva rechazada");
+                location.reload();
+            },
+            error: function() {
+                alert("Error al rechazar la reserva");
+            }
+        });
+    }
+    </script>
+}

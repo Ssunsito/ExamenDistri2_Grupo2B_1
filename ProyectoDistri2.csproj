@@ -223,8 +223,11 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\EspacioController.cs" />
-    <Compile Include="Controllers\ReservaController.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\EspaciosController.cs" />
+    <Compile Include="Controllers\MVC\AdminController.cs" />
+    <Compile Include="Controllers\MVC\ReservasController.cs" />
+    <Compile Include="Controllers\ReservasController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="DAL\GestorReserva.cs" />
     <Compile Include="Global.asax.cs">
@@ -253,6 +256,13 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\web.config" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Reservas\Index.cshtml" />
+    <Content Include="Views\Reservas\Crear.cshtml" />
+    <Content Include="Views\Reservas\Historial.cshtml" />
+    <Content Include="Views\Reservas\_HistorialTabla.cshtml" />
+    <Content Include="Views\Reservas\PanelCoordinador.cshtml" />
+    <Content Include="Views\Admin\Panel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -5,15 +5,17 @@
 // Fecha: 30/07/2025
 //
 // RESULTADOS
-// - Implementa endpoints para consultar y filtrar reservas (día, semana, mes).
-// - Incluye autorización por roles para ciertas rutas.
-// - Manejo de excepciones para evitar caída del servidor.
-//
+// - Implementa endpoints para consultar, filtrar, crear y gestionar reservas.
+// - Incluye autorización por roles para rutas críticas.
+// - Manejo de excepciones centralizado con SafeExecute.
+// - Validación de conflicto para creación y edición de reservas.
+// 
 // CONCLUSIONES
 // - Centraliza la lógica de acceso a reservas vía Web API.
 // - Facilita la integración de la capa de negocio con la capa de presentación.
-// - Mejora la robustez al capturar y devolver errores de forma controlada.
+// - Mejora la robustez y mantiene consistencia en respuestas JSON.
 // *****************************************************
+
 using System;
 using System.Web.Http;
 using System.Data.Entity;
@@ -34,7 +36,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
         private readonly ReservaBN service = new ReservaBN();
         private readonly GestorReserva db = new GestorReserva();
 
-        // 🔹 Método auxiliar para manejar excepciones
+        // 🔹 Método auxiliar para manejo de excepciones
         private IHttpActionResult SafeExecute(Func<IHttpActionResult> action)
         {
             try
@@ -59,6 +61,8 @@ namespace ProyectoDistri2.WebAPI.Controllers
             }
         }
 
+        // -------------------- 🔹 CONSULTAS --------------------
+
         [HttpGet]
         [Route("dia")]
         public IHttpActionResult ConsultarPorDia(DateTime fecha) =>
@@ -82,6 +86,32 @@ namespace ProyectoDistri2.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Coordinador")]
+        [Route("")]
+        public IHttpActionResult GetReservas() =>
+            SafeExecute(() => Ok(db.Reservas
+                .Include(r => r.Usuario)
+                .Include(r => r.Espacio)
+                .ToList()));
+
+        // 🔹 Obtener reserva por ID (para modales)
+        [HttpGet]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("{id:int}")]
+        public IHttpActionResult GetReservaPorId(int id) =>
+            SafeExecute(() =>
+            {
+                var reserva = db.Reservas
+                    .Include(r => r.Usuario)
+                    .Include(r => r.Espacio)
+                    .FirstOrDefault(r => r.Id == id);
+                if (reserva == null) return NotFound();
+                return Ok(reserva);
+            });
+
+        // -------------------- 🔹 EXPORTACIÓN --------------------
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,Coordinador")]
         [Route("exportar/excel")]
         public HttpResponseMessage ExportarExcel()
         {
@@ -96,16 +126,18 @@ namespace ProyectoDistri2.WebAPI.Controllers
                     ws.Cell(1, 3).Value = "Espacio";
                     ws.Cell(1, 4).Value = "Fecha Inicio";
                     ws.Cell(1, 5).Value = "Fecha Fin";
+
                     int row = 2;
                     foreach (var r in reservas)
                     {
                         ws.Cell(row, 1).Value = r.Id;
-                        ws.Cell(row, 2).Value = r.Usuario.Nombre;
-                        ws.Cell(row, 3).Value = r.Espacio.Nombre;
+                        ws.Cell(row, 2).Value = r.Usuario?.Nombre;
+                        ws.Cell(row, 3).Value = r.Espacio?.Nombre;
                         ws.Cell(row, 4).Value = r.FechaInicio;
                         ws.Cell(row, 5).Value = r.FechaFin;
                         row++;
                     }
+
                     using (var stream = new MemoryStream())
                     {
                         workbook.SaveAs(stream);
@@ -124,25 +156,15 @@ namespace ProyectoDistri2.WebAPI.Controllers
                     }
                 }
             }
-            catch (System.Data.SqlClient.SqlException ex)
-            {
-                var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-                response.Content = new StringContent("Error en la base de datos: " + ex.Message);
-                return response;
-            }
             catch (Exception ex)
             {
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                response.Content = new StringContent("Error inesperado: " + ex.Message);
+                response.Content = new StringContent("Error al exportar: " + ex.Message);
                 return response;
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin,Coordinador")]
-        [Route("")]
-        public IHttpActionResult GetReservas() =>
-            SafeExecute(() => Ok(db.Reservas.Include(r => r.Usuario).Include(r => r.Espacio).ToList()));
+        // -------------------- 🔹 CRUD DE RESERVAS --------------------
 
         [HttpPost]
         [Route("")]
@@ -152,10 +174,10 @@ namespace ProyectoDistri2.WebAPI.Controllers
                  if (!ModelState.IsValid)
                      return BadRequest(ModelState);
 
-                 // 🔹 Validar disponibilidad
+                 // 🔹 Validar conflicto de horario
                  bool existeConflicto = db.Reservas.Any(r =>
                      r.EspacioId == reserva.EspacioId &&
-                     r.Estado == "Aprobada" && // Solo las aprobadas bloquean el espacio
+                     r.Estado == "Aprobada" &&
                      r.FechaInicio < reserva.FechaFin &&
                      r.FechaFin > reserva.FechaInicio
                  );
@@ -175,34 +197,71 @@ namespace ProyectoDistri2.WebAPI.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin,Coordinador")]
-        [Route("aprobar/{id:int}")]
-        public IHttpActionResult AprobarReserva(int id) =>
-    SafeExecute(() =>
-    {
-        var reserva = db.Reservas.Find(id);
-        if (reserva == null)
-            return NotFound();
-
-        // 🔹 Validar conflicto antes de aprobar
-        bool existeConflicto = db.Reservas.Any(r =>
-            r.Id != reserva.Id &&
-            r.EspacioId == reserva.EspacioId &&
-            r.Estado == "Aprobada" &&
-            r.FechaInicio < reserva.FechaFin &&
-            r.FechaFin > reserva.FechaInicio
-        );
-
-        if (existeConflicto)
-            return Content(HttpStatusCode.BadRequest, new
+        [Route("{id:int}")]
+        public IHttpActionResult EditarReserva(int id, Reserva reserva) =>
+            SafeExecute(() =>
             {
-                error = "Conflicto de reserva",
-                detalle = "No se puede aprobar: existe otra reserva aprobada en el mismo horario y espacio."
+                if (!ModelState.IsValid || id != reserva.Id)
+                    return BadRequest(ModelState);
+
+                var reservaExistente = db.Reservas.Find(id);
+                if (reservaExistente == null)
+                    return NotFound();
+
+                // 🔹 Validar conflicto
+                bool existeConflicto = db.Reservas.Any(r =>
+                    r.Id != reserva.Id &&
+                    r.EspacioId == reserva.EspacioId &&
+                    r.Estado == "Aprobada" &&
+                    r.FechaInicio < reserva.FechaFin &&
+                    r.FechaFin > reserva.FechaInicio
+                );
+
+                if (existeConflicto)
+                    return Content(HttpStatusCode.BadRequest, new
+                    {
+                        error = "Conflicto de reserva",
+                        detalle = "No se puede guardar la reserva: existe otra reserva aprobada en el mismo horario y espacio."
+                    });
+
+                // 🔹 Actualizar datos
+                reservaExistente.EspacioId = reserva.EspacioId;
+                reservaExistente.FechaInicio = reserva.FechaInicio;
+                reservaExistente.FechaFin = reserva.FechaFin;
+                reservaExistente.Estado = reserva.Estado;
+                db.SaveChanges();
+
+                return Ok(reservaExistente);
             });
 
-        reserva.Estado = "Aprobada";
-        db.SaveChanges();
-        return Ok(reserva);
-    });
+        [HttpPut]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("aprobar/{id:int}")]
+        public IHttpActionResult AprobarReserva(int id) =>
+            SafeExecute(() =>
+            {
+                var reserva = db.Reservas.Find(id);
+                if (reserva == null) return NotFound();
+
+                bool existeConflicto = db.Reservas.Any(r =>
+                    r.Id != reserva.Id &&
+                    r.EspacioId == reserva.EspacioId &&
+                    r.Estado == "Aprobada" &&
+                    r.FechaInicio < reserva.FechaFin &&
+                    r.FechaFin > reserva.FechaInicio
+                );
+
+                if (existeConflicto)
+                    return Content(HttpStatusCode.BadRequest, new
+                    {
+                        error = "Conflicto de reserva",
+                        detalle = "No se puede aprobar: existe otra reserva aprobada en el mismo horario y espacio."
+                    });
+
+                reserva.Estado = "Aprobada";
+                db.SaveChanges();
+                return Ok(reserva);
+            });
 
         [HttpPut]
         [Authorize(Roles = "Admin,Coordinador")]
@@ -230,54 +289,53 @@ namespace ProyectoDistri2.WebAPI.Controllers
                 return Ok(reserva);
             });
 
+        // -------------------- 🔹 HISTORIAL --------------------
+
         [HttpGet]
         [Authorize]
         [Route("historial/usuario/{idUsuario:int}")]
         public IHttpActionResult HistorialPorUsuario(int idUsuario) =>
-           SafeExecute(() =>
-           {
-               // Si el usuario autenticado es Profesor, solo puede ver su propio historial
-               if (User.IsInRole("Profesor"))
-               {
-                   // Obtener el nombre del usuario autenticado
-                   string nombreUsuario = User.Identity.Name;
-                   var usuarioActual = db.Usuarios.FirstOrDefault(u => u.Nombre == nombreUsuario);
-                   if (usuarioActual == null || usuarioActual.Id != idUsuario)
-                   {
-                       return Content(HttpStatusCode.Forbidden, new
-                       {
-                           error = "Acceso denegado",
-                           detalle = "Un profesor solo puede consultar su propio historial."
-                       });
-                   }
-               }
+            SafeExecute(() =>
+            {
+                // Si es profesor, solo puede ver su propio historial
+                if (User.IsInRole("Profesor"))
+                {
+                    string nombreUsuario = User.Identity.Name;
+                    var usuarioActual = db.Usuarios.FirstOrDefault(u => u.Nombre == nombreUsuario);
+                    if (usuarioActual == null || usuarioActual.Id != idUsuario)
+                    {
+                        return Content(HttpStatusCode.Forbidden, new
+                        {
+                            error = "Acceso denegado",
+                            detalle = "Un profesor solo puede consultar su propio historial."
+                        });
+                    }
+                }
 
-               var historial = db.Reservas
-                   .Include(r => r.Usuario)
-                   .Include(r => r.Espacio)
-                   .Where(r => r.UsuarioId == idUsuario)
-                   .OrderByDescending(r => r.FechaInicio)
-                   .ToList();
+                var historial = db.Reservas
+                    .Include(r => r.Usuario)
+                    .Include(r => r.Espacio)
+                    .Where(r => r.UsuarioId == idUsuario)
+                    .OrderByDescending(r => r.FechaInicio)
+                    .ToList();
 
-               return Ok(historial);
-           });
+                return Ok(historial);
+            });
 
         [HttpGet]
         [Authorize(Roles = "Admin,Coordinador")]
         [Route("historial/espacio/{idEspacio:int}")]
         public IHttpActionResult HistorialPorEspacio(int idEspacio) =>
-        SafeExecute(() =>
-        {
-            var historial = db.Reservas
-                .Include(r => r.Usuario)
-                .Include(r => r.Espacio)
-                .Where(r => r.EspacioId == idEspacio)
-                .OrderByDescending(r => r.FechaInicio)
-                .ToList();
+            SafeExecute(() =>
+            {
+                var historial = db.Reservas
+                    .Include(r => r.Usuario)
+                    .Include(r => r.Espacio)
+                    .Where(r => r.EspacioId == idEspacio)
+                    .OrderByDescending(r => r.FechaInicio)
+                    .ToList();
 
-            return Ok(historial);
-        });
+                return Ok(historial);
+            });
     }
-
-
 }
