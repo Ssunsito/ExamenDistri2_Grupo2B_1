@@ -1,6 +1,6 @@
 ﻿/* ====== ESTILOS GENERALES ====== */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa; /* Gris claro para todas las vistas */
     margin: 0;
 }
@@ -10,7 +10,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: linear-gradient(90deg, #0d6efd, #6610f2); /* Azul degradado */
+    background: linear-gradient(90deg, #3a8dde, #7baaf7); /* Azul degradado más suave */
     box-shadow: 0px 2px 8px rgba(0,0,0,0.3);
 }
 
@@ -53,7 +53,7 @@ main.container {
 
 /* ====== FOOTER ====== */
 footer {
-    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    background: linear-gradient(90deg, #3a8dde, #7baaf7);
     color: white;
     font-size: 0.9rem;
     letter-spacing: 0.5px;
