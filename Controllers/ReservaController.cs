@@ -7,10 +7,12 @@
 // RESULTADOS
 // - Implementa endpoints para consultar y filtrar reservas (día, semana, mes).
 // - Incluye autorización por roles para ciertas rutas.
+// - Manejo de excepciones para evitar caída del servidor.
 //
 // CONCLUSIONES
 // - Centraliza la lógica de acceso a reservas vía Web API.
 // - Facilita la integración de la capa de negocio con la capa de presentación.
+// - Mejora la robustez al capturar y devolver errores de forma controlada.
 // *****************************************************
 using System;
 using System.Web.Http;
@@ -20,82 +22,262 @@ using ClosedXML.Excel;
 using System.IO;
 using System.Net.Http;
 using System.Net;
-using DocumentFormat.OpenXml.Spreadsheet;
 using ProyectoDistri2.DAL;
+using ProyectoDistri2.Models;
 using System.Linq;
 
 namespace ProyectoDistri2.WebAPI.Controllers
 {
-    
     [RoutePrefix("api/reservas")]
     public class ReservasController : ApiController
     {
         private readonly ReservaBN service = new ReservaBN();
         private readonly GestorReserva db = new GestorReserva();
 
+        // 🔹 Método auxiliar para manejar excepciones
+        private IHttpActionResult SafeExecute(Func<IHttpActionResult> action)
+        {
+            try
+            {
+                return action();
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                return Content(HttpStatusCode.BadRequest, new
+                {
+                    error = "Error en la base de datos. Verifique IDs y relaciones.",
+                    detalle = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new
+                {
+                    error = "Error inesperado en el servidor.",
+                    detalle = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         [Route("dia")]
         public IHttpActionResult ConsultarPorDia(DateTime fecha) =>
-            Ok(service.ConsultarPorDia(fecha));
+            SafeExecute(() => Ok(service.ConsultarPorDia(fecha)));
 
         [HttpGet]
         [Route("semana")]
         public IHttpActionResult ConsultarPorSemana(DateTime inicio) =>
-            Ok(service.ConsultarPorSemana(inicio));
+            SafeExecute(() => Ok(service.ConsultarPorSemana(inicio)));
 
         [HttpGet]
         [Route("mes")]
         public IHttpActionResult ConsultarPorMes(int mes, int año) =>
-            Ok(service.ConsultarPorMes(mes, año));
+            SafeExecute(() => Ok(service.ConsultarPorMes(mes, año)));
 
         [HttpGet]
         [Authorize(Roles = "Admin,Coordinador")]
         [Route("filtrar")]
         public IHttpActionResult FiltrarReservas(string usuario = "", string tipoEspacio = "", string estado = "") =>
-            Ok(service.FiltrarReservas(usuario, tipoEspacio, estado));
+            SafeExecute(() => Ok(service.FiltrarReservas(usuario, tipoEspacio, estado)));
 
         [HttpGet]
         [Authorize(Roles = "Admin,Coordinador")]
-        [Route("api/reservas/exportar/excel")]
+        [Route("exportar/excel")]
         public HttpResponseMessage ExportarExcel()
         {
-            var reservas = db.Reservas.Include(r => r.Usuario).Include(r => r.Espacio).ToList();
-            using (var workbook = new XLWorkbook())
+            try
             {
-                var ws = workbook.Worksheets.Add("Reservas");
-                ws.Cell(1, 1).Value = "ID";
-                ws.Cell(1, 2).Value = "Usuario";
-                ws.Cell(1, 3).Value = "Espacio";
-                ws.Cell(1, 4).Value = "Fecha Inicio";
-                ws.Cell(1, 5).Value = "Fecha Fin";
-                int row = 2;
-                foreach (var r in reservas)
+                var reservas = db.Reservas.Include(r => r.Usuario).Include(r => r.Espacio).ToList();
+                using (var workbook = new XLWorkbook())
                 {
-                    ws.Cell(row, 1).Value = r.Id;
-                    ws.Cell(row, 2).Value = r.Usuario.Nombre;
-                    ws.Cell(row, 3).Value = r.Espacio.Nombre;
-                    ws.Cell(row, 4).Value = r.FechaInicio;
-                    ws.Cell(row, 5).Value = r.FechaFin;
-                    row++;
-                }
-                using (var stream = new MemoryStream())
-                {
-                    workbook.SaveAs(stream);
-                    var result = new HttpResponseMessage(HttpStatusCode.OK)
+                    var ws = workbook.Worksheets.Add("Reservas");
+                    ws.Cell(1, 1).Value = "ID";
+                    ws.Cell(1, 2).Value = "Usuario";
+                    ws.Cell(1, 3).Value = "Espacio";
+                    ws.Cell(1, 4).Value = "Fecha Inicio";
+                    ws.Cell(1, 5).Value = "Fecha Fin";
+                    int row = 2;
+                    foreach (var r in reservas)
                     {
-                        Content = new ByteArrayContent(stream.ToArray())
-                    };
-                    result.Content.Headers.ContentType =
-                        new System.Net.Http.Headers.MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                    result.Content.Headers.ContentDisposition =
-                        new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
+                        ws.Cell(row, 1).Value = r.Id;
+                        ws.Cell(row, 2).Value = r.Usuario.Nombre;
+                        ws.Cell(row, 3).Value = r.Espacio.Nombre;
+                        ws.Cell(row, 4).Value = r.FechaInicio;
+                        ws.Cell(row, 5).Value = r.FechaFin;
+                        row++;
+                    }
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var result = new HttpResponseMessage(HttpStatusCode.OK)
                         {
-                            FileName = "Reservas.xlsx"
+                            Content = new ByteArrayContent(stream.ToArray())
                         };
-                    return result;
+                        result.Content.Headers.ContentType =
+                            new System.Net.Http.Headers.MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        result.Content.Headers.ContentDisposition =
+                            new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
+                            {
+                                FileName = "Reservas.xlsx"
+                            };
+                        return result;
+                    }
                 }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+                response.Content = new StringContent("Error en la base de datos: " + ex.Message);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                response.Content = new StringContent("Error inesperado: " + ex.Message);
+                return response;
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("")]
+        public IHttpActionResult GetReservas() =>
+            SafeExecute(() => Ok(db.Reservas.Include(r => r.Usuario).Include(r => r.Espacio).ToList()));
+
+        [HttpPost]
+        [Route("")]
+        public IHttpActionResult CrearReserva(Reserva reserva) =>
+             SafeExecute(() =>
+             {
+                 if (!ModelState.IsValid)
+                     return BadRequest(ModelState);
+
+                 // 🔹 Validar disponibilidad
+                 bool existeConflicto = db.Reservas.Any(r =>
+                     r.EspacioId == reserva.EspacioId &&
+                     r.Estado == "Aprobada" && // Solo las aprobadas bloquean el espacio
+                     r.FechaInicio < reserva.FechaFin &&
+                     r.FechaFin > reserva.FechaInicio
+                 );
+
+                 if (existeConflicto)
+                     return Content(HttpStatusCode.BadRequest, new
+                     {
+                         error = "Conflicto de reserva",
+                         detalle = "Ya existe una reserva aprobada que se superpone con este horario en el mismo espacio."
+                     });
+
+                 reserva.Estado = "Pendiente";
+                 db.Reservas.Add(reserva);
+                 db.SaveChanges();
+                 return Ok(reserva);
+             });
+
+        [HttpPut]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("aprobar/{id:int}")]
+        public IHttpActionResult AprobarReserva(int id) =>
+    SafeExecute(() =>
+    {
+        var reserva = db.Reservas.Find(id);
+        if (reserva == null)
+            return NotFound();
+
+        // 🔹 Validar conflicto antes de aprobar
+        bool existeConflicto = db.Reservas.Any(r =>
+            r.Id != reserva.Id &&
+            r.EspacioId == reserva.EspacioId &&
+            r.Estado == "Aprobada" &&
+            r.FechaInicio < reserva.FechaFin &&
+            r.FechaFin > reserva.FechaInicio
+        );
+
+        if (existeConflicto)
+            return Content(HttpStatusCode.BadRequest, new
+            {
+                error = "Conflicto de reserva",
+                detalle = "No se puede aprobar: existe otra reserva aprobada en el mismo horario y espacio."
+            });
+
+        reserva.Estado = "Aprobada";
+        db.SaveChanges();
+        return Ok(reserva);
+    });
+
+        [HttpPut]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("rechazar/{id:int}")]
+        public IHttpActionResult RechazarReserva(int id) =>
+            SafeExecute(() =>
+            {
+                var reserva = db.Reservas.Find(id);
+                if (reserva == null) return NotFound();
+                reserva.Estado = "Rechazada";
+                db.SaveChanges();
+                return Ok(reserva);
+            });
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("{id:int}")]
+        public IHttpActionResult BorrarReserva(int id) =>
+            SafeExecute(() =>
+            {
+                var reserva = db.Reservas.Find(id);
+                if (reserva == null) return NotFound();
+                db.Reservas.Remove(reserva);
+                db.SaveChanges();
+                return Ok(reserva);
+            });
+
+        [HttpGet]
+        [Authorize]
+        [Route("historial/usuario/{idUsuario:int}")]
+        public IHttpActionResult HistorialPorUsuario(int idUsuario) =>
+           SafeExecute(() =>
+           {
+               // Si el usuario autenticado es Profesor, solo puede ver su propio historial
+               if (User.IsInRole("Profesor"))
+               {
+                   // Obtener el nombre del usuario autenticado
+                   string nombreUsuario = User.Identity.Name;
+                   var usuarioActual = db.Usuarios.FirstOrDefault(u => u.Nombre == nombreUsuario);
+                   if (usuarioActual == null || usuarioActual.Id != idUsuario)
+                   {
+                       return Content(HttpStatusCode.Forbidden, new
+                       {
+                           error = "Acceso denegado",
+                           detalle = "Un profesor solo puede consultar su propio historial."
+                       });
+                   }
+               }
+
+               var historial = db.Reservas
+                   .Include(r => r.Usuario)
+                   .Include(r => r.Espacio)
+                   .Where(r => r.UsuarioId == idUsuario)
+                   .OrderByDescending(r => r.FechaInicio)
+                   .ToList();
+
+               return Ok(historial);
+           });
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,Coordinador")]
+        [Route("historial/espacio/{idEspacio:int}")]
+        public IHttpActionResult HistorialPorEspacio(int idEspacio) =>
+        SafeExecute(() =>
+        {
+            var historial = db.Reservas
+                .Include(r => r.Usuario)
+                .Include(r => r.Espacio)
+                .Where(r => r.EspacioId == idEspacio)
+                .OrderByDescending(r => r.FechaInicio)
+                .ToList();
+
+            return Ok(historial);
+        });
     }
+
+
 }

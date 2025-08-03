@@ -16,19 +16,25 @@
 
         protected override void Seed(ProyectoDistri2.DAL.GestorReserva context)
         {
-            // 1. Usuarios
-            var usuarios = new List<Usuario>
-    {
-        new Usuario { Nombre = "Kenneth", Rol = "Admin" },
-        new Usuario { Nombre = "Maria", Rol = "Coordinador" },
-        new Usuario { Nombre = "Pedro", Rol = "Profesor" },
-        new Usuario { Nombre = "Luisa", Rol = "Profesor" },
-        new Usuario { Nombre = "Jorge", Rol = "Coordinador" }
-    };
-            usuarios.ForEach(u => context.Usuarios.Add(u));
+            // Limpieza de tablas (solo para desarrollo)
+            context.Reservas.RemoveRange(context.Reservas);
+            context.Usuarios.RemoveRange(context.Usuarios);
+            context.Espacios.RemoveRange(context.Espacios);
             context.SaveChanges();
 
-            // 2. Espacios
+            // 1️⃣ Usuarios
+            var usuarios = new List<Usuario>
+    {
+        new Usuario { Nombre = "Kenneth", Rol = "Admin", Password = "1234" },
+        new Usuario { Nombre = "Maria", Rol = "Coordinador", Password = "abcd" },
+        new Usuario { Nombre = "Pedro", Rol = "Profesor", Password = "pass1" },
+        new Usuario { Nombre = "Luisa", Rol = "Profesor", Password = "pass2" },
+        new Usuario { Nombre = "Jorge", Rol = "Coordinador", Password = "admin2" }
+    };
+            context.Usuarios.AddRange(usuarios);
+            context.SaveChanges();
+
+            // 2️⃣ Espacios
             var espacios = new List<Espacio>
     {
         new Espacio { Nombre = "Aula 101", Tipo = "Aula" },
@@ -37,54 +43,54 @@
         new Espacio { Nombre = "Lab Software", Tipo = "Laboratorio" },
         new Espacio { Nombre = "Auditorio Principal", Tipo = "Auditorio" }
     };
-            espacios.ForEach(e => context.Espacios.Add(e));
+            context.Espacios.AddRange(espacios);
             context.SaveChanges();
 
-            // 3. Reservas de prueba
+            // 3️⃣ Reservas
             var reservas = new List<Reserva>
     {
         new Reserva
         {
-            UsuarioId = usuarios[0].Id, // Kenneth (Admin)
-            EspacioId = espacios[0].Id, // Aula 101
+            UsuarioId = usuarios[0].Id,
+            EspacioId = espacios[0].Id,
             FechaInicio = DateTime.Now.AddDays(-2),
             FechaFin = DateTime.Now.AddDays(-2).AddHours(2),
             Estado = "Aprobada"
         },
         new Reserva
         {
-            UsuarioId = usuarios[1].Id, // Maria (Coordinador)
-            EspacioId = espacios[2].Id, // Lab Redes
+            UsuarioId = usuarios[1].Id,
+            EspacioId = espacios[2].Id,
             FechaInicio = DateTime.Now,
             FechaFin = DateTime.Now.AddHours(3),
             Estado = "Pendiente"
         },
         new Reserva
         {
-            UsuarioId = usuarios[2].Id, // Pedro (Profesor)
-            EspacioId = espacios[4].Id, // Auditorio Principal
+            UsuarioId = usuarios[2].Id,
+            EspacioId = espacios[4].Id,
             FechaInicio = DateTime.Now.AddDays(1),
             FechaFin = DateTime.Now.AddDays(1).AddHours(4),
             Estado = "Pendiente"
         },
         new Reserva
         {
-            UsuarioId = usuarios[3].Id, // Luisa (Profesor)
-            EspacioId = espacios[1].Id, // Aula 102
+            UsuarioId = usuarios[3].Id,
+            EspacioId = espacios[1].Id,
             FechaInicio = DateTime.Now.AddDays(3),
             FechaFin = DateTime.Now.AddDays(3).AddHours(2),
             Estado = "Rechazada"
         },
         new Reserva
         {
-            UsuarioId = usuarios[4].Id, // Jorge (Coordinador)
-            EspacioId = espacios[3].Id, // Lab Software
+            UsuarioId = usuarios[4].Id,
+            EspacioId = espacios[3].Id,
             FechaInicio = DateTime.Now.AddDays(7),
             FechaFin = DateTime.Now.AddDays(7).AddHours(3),
             Estado = "Aprobada"
         }
     };
-            reservas.ForEach(r => context.Reservas.Add(r));
+            context.Reservas.AddRange(reservas);
             context.SaveChanges();
         }
     }

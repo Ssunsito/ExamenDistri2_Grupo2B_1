@@ -26,5 +26,8 @@ namespace ProyectoDistri2.Models
 
         [Required]
         public string Rol { get; set; } // Admin, Coordinador, Profesor
+
+        [Required]
+        public string Password { get; set; } // 🔹 Contraseña para login
     }
 }
