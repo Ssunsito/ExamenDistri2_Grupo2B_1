@@ -41,13 +41,14 @@ namespace ProyectoDistri2.Controllers
         }
 
         // GET: Reservas/Crear/{espacioId}
+        // GET: Reservas/Crear
         public ActionResult Crear(int espacioId)
         {
             var reserva = new Reserva
             {
                 EspacioId = espacioId,
-                FechaInicio = System.DateTime.Now,
-                FechaFin = System.DateTime.Now.AddHours(1)
+                FechaInicio = DateTime.Now,
+                FechaFin = DateTime.Now.AddHours(1)
             };
             return View(reserva);
         }
@@ -56,11 +57,16 @@ namespace ProyectoDistri2.Controllers
         [HttpPost]
         public async Task<ActionResult> Crear(Reserva reserva)
         {
-            if (!ModelState.IsValid)
-                return Json(new { success = false, message = "Datos inválidos en el formulario." });
+            // Asignar usuario y estado antes de validar
+            if (Session["UserId"] == null)
+                return Json(new { success = false, message = "Sesión expirada, vuelva a iniciar sesión." });
 
-            // 🔹 Asignar usuario autenticado
             reserva.UsuarioId = (int)Session["UserId"];
+            reserva.Estado = "Pendiente";
+
+            // Validación de fechas
+            if (reserva.FechaInicio >= reserva.FechaFin)
+                return Json(new { success = false, message = "La fecha de inicio debe ser menor a la fecha fin." });
 
             using (var client = new HttpClient())
             {
@@ -77,11 +83,12 @@ namespace ProyectoDistri2.Controllers
                     return Json(new { success = true, message = "Reserva creada correctamente. Pendiente de confirmación." });
                 }
 
-                // Leer error de la API (por ejemplo conflicto de horarios)
+                // Leer error de la API (conflicto de horarios u otro)
                 var error = await response.Content.ReadAsStringAsync();
                 return Json(new { success = false, message = "No se pudo crear la reserva: " + error });
             }
         }
+
 
 
         // GET: Reservas/Historial

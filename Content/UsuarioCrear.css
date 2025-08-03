@@ -1,0 +1,231 @@
+﻿/* ====== CONTENEDOR PRINCIPAL ====== */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    background-color: #f1f3f5;
+    min-height: 80vh;
+}
+
+/* ====== CARD DEL FORMULARIO ====== */
+.form-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    animation: fadeIn 0.6s ease;
+}
+
+    /* ====== TÍTULO ====== */
+    .form-card h2 {
+        text-align: center;
+        font-weight: 800;
+        color: #0d6efd;
+        margin-bottom: 25px;
+    }
+
+    /* ====== INPUTS ====== */
+    .form-card .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-card .form-control {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .form-card .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13,110,253,0.3);
+        }
+
+    /* ====== BOTONES ====== */
+    .form-card .btn {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .form-card .btn-success {
+        background-color: #198754;
+        border: none;
+    }
+
+        .form-card .btn-success:hover {
+            background-color: #157347;
+            transform: translateY(-2px);
+        }
+
+    .form-card .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+
+        .form-card .btn-secondary:hover {
+            background-color: #495057;
+            transform: translateY(-2px);
+        }
+
+/* ====== ALERTAS ====== */
+#alerta {
+    display: none;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.alert-dinamica {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Estado éxito */
+.alert-dinamica.exito {
+    background-color: #e7f7ee;
+    border: 1px solid #198754;
+    color: #198754;
+}
+
+/* Estado error */
+.alert-dinamica.error {
+    background-color: #fdecea;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+/* Iconos */
+.icono-alerta {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+}
+
+/* Icono de éxito */
+.icono-exito {
+    background-color: #198754;
+}
+
+.icono-exito::after {
+    content: "✔";
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Icono de error */
+.icono-error {
+    background-color: #dc3545;
+}
+
+    .icono-error::after {
+        content: "✖";
+        color: white;
+        font-weight: bold;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+
+/* Animación */
+@keyframes slideFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ====== ANIMACIÓN ====== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ====== RESPONSIVIDAD ====== */
+@media (max-width: 600px) {
+    .form-card {
+        padding: 20px;
+        max-width: 90%;
+    }
+}
+/* ====== MODAL ALERTA ====== */
+.modal-alert {
+    border-radius: 16px;
+    padding: 10px 0;
+    animation: fadeInScale 0.4s ease-in-out;
+    border: none;
+}
+
+    /* Estados */
+    .modal-alert.alert-success {
+        background: #e7f7ee;
+        border-top: 6px solid #198754;
+        color: #198754;
+    }
+
+    .modal-alert.alert-error {
+        background: #fdecea;
+        border-top: 6px solid #dc3545;
+        color: #dc3545;
+    }
+
+/* Animación */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Botón modal */
+.modal-alert .btn-primary {
+    background: #0d6efd;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+    .modal-alert .btn-primary:hover {
+        background: #dc3545;
+        transform: scale(1.05);
+    }

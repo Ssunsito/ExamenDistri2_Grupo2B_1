@@ -4,55 +4,80 @@
     ViewBag.Title = "Crear Reserva";
 }
 
-<h2>Crear Reserva</h2>
+<div class="form-card">
+    <h2>Crear Reserva</h2>
 
-<div id="alerta" class="alert" style="display:none;"></div>
+    @using (Html.BeginForm("Crear", "Reservas", FormMethod.Post, new { id = "formReserva" }))
+    {
+        @Html.HiddenFor(m => m.EspacioId)
 
-@using (Html.BeginForm("Crear", "Reservas", FormMethod.Post, new { id = "formReserva" }))
-{
-    @Html.HiddenFor(m => m.EspacioId)
+        <div class="form-group">
+            <label>Fecha Inicio</label>
+            @Html.TextBoxFor(m => m.FechaInicio, "{0:yyyy-MM-ddTHH:mm}",
+                new { @class = "form-control", type = "datetime-local", required = "required" })
+        </div>
 
-    <div class="form-group">
-        <label>Fecha Inicio</label>
-        @Html.TextBoxFor(m => m.FechaInicio, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
-    </div>
+        <div class="form-group">
+            <label>Fecha Fin</label>
+            @Html.TextBoxFor(m => m.FechaFin, "{0:yyyy-MM-ddTHH:mm}",
+                new { @class = "form-control", type = "datetime-local", required = "required" })
+        </div>
 
-    <div class="form-group">
-        <label>Fecha Fin</label>
-        @Html.TextBoxFor(m => m.FechaFin, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
-    </div>
+        <button type="submit" class="btn btn-success mt-2">Guardar Reserva</button>
+        @Html.ActionLink("Volver a Espacios", "Index", null, new { @class = "btn btn-secondary mt-2 ms-2" })
 
-    <button type="submit" class="btn btn-success">Guardar Reserva</button>
-    @Html.ActionLink("Volver a Espacios", "Index", null, new { @class = "btn btn-secondary" })
-}
+        <!-- 🔹 Alerta dinámica con icono -->
+        <div id="alertaResultado" class="alert-dinamica" style="display:none;">
+            <div class="icono-alerta"></div>
+            <span class="mensaje-alerta"></span>
+        </div>
+    }
+</div>
 
 @section scripts {
     <script>
-    $("#formReserva").submit(function (e) {
-        e.preventDefault();
-        $.ajax({
-            url: this.action,
-            type: "POST",
-            data: $(this).serialize(),
-            success: function (resp) {
-                var alerta = $("#alerta");
-                alerta.removeClass("alert-success alert-danger");
+        $(document).ready(function () {
+            $("#formReserva").submit(function (e) {
+                e.preventDefault();
 
-                if (resp.success) {
-                    alerta.addClass("alert-success");
+                $.ajax({
+                    url: this.action,
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (resp) {
+                        mostrarAlerta(resp.success, resp.message);
+                    },
+                    error: function () {
+                        mostrarAlerta(false, "Error inesperado al intentar guardar la reserva.");
+                    }
+                });
+            });
+
+            function mostrarAlerta(exito, mensaje) {
+                const alerta = $("#alertaResultado");
+                const icono = alerta.find(".icono-alerta");
+                const texto = alerta.find(".mensaje-alerta");
+
+                alerta.removeClass("exito error").hide();
+                icono.removeClass("icono-exito icono-error");
+
+                if (exito) {
+                    alerta.addClass("exito");
+                    icono.addClass("icono-exito");
                 } else {
-                    alerta.addClass("alert-danger");
+                    alerta.addClass("error");
+                    icono.addClass("icono-error");
                 }
 
-                alerta.text(resp.message).fadeIn();
+                texto.text(mensaje);
 
-                // Ocultar después de 5 segundos
-                setTimeout(() => alerta.fadeOut(), 5000);
-            },
-            error: function () {
-                alert("Error inesperado al intentar guardar la reserva.");
+                alerta.slideDown(300).fadeIn(200);
+                setTimeout(() => alerta.slideUp(300).fadeOut(200), 5000);
             }
         });
-    });
     </script>
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/UsuarioCrear.css" />
 }

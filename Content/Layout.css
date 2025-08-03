@@ -1,0 +1,119 @@
+﻿/* ====== ESTILOS GENERALES ====== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa; /* Gris claro para todas las vistas */
+    margin: 0;
+}
+
+/* ====== HEADER ====== */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(90deg, #0d6efd, #6610f2); /* Azul degradado */
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.3);
+}
+
+    header h4 {
+        color: white;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    header span {
+        font-weight: 500;
+        color: #f8f9fa;
+    }
+
+    /* Botón cerrar sesión */
+    header .btn-outline-light {
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+        header .btn-outline-light:hover {
+            background-color: #dc3545; /* Rojo */
+            border-color: #dc3545;
+        }
+
+/* ====== MAIN ====== */
+main.container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    min-height: 70vh;
+}
+
+/* Main sin tanto margen */
+.main-content {
+    padding: 30px 50px;
+    min-height: 80vh;
+    background-color: #f8f9fa;
+}
+
+
+/* ====== FOOTER ====== */
+footer {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    color: white;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0px -2px 8px rgba(0,0,0,0.2);
+}
+
+/* ====== TABLAS GENERALES ====== */
+table.table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    table.table thead {
+        background: #0d6efd;
+        color: white;
+    }
+
+    table.table tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+/* ====== BOTONES GENERALES ====== */
+.btn-primary {
+    background: #0d6efd;
+    border: none;
+    transition: 0.3s;
+}
+
+    .btn-primary:hover {
+        background: #0b5ed7;
+    }
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+/* ====== LOGIN: ocultar header/footer ====== */
+body.login-page header,
+body.login-page footer {
+    display: none;
+}
+
+/* ====== ANIMACIONES SUAVES ====== */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

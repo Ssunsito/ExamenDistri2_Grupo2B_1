@@ -18,7 +18,7 @@
 <div class="tab-content mt-3">
     <!-- 🔹 Reservas Pendientes -->
     <div class="tab-pane fade show active" id="reservas" role="tabpanel">
-        <table class="table table-bordered table-striped">
+        <table class="table-modern">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -50,11 +50,13 @@
                 }
             </tbody>
         </table>
+
+        <div id="alertaResultado" class="alert-dinamica mt-3"></div>
     </div>
 
     <!-- 🔹 Lista de Espacios -->
     <div class="tab-pane fade" id="espacios" role="tabpanel">
-        <table class="table table-bordered table-striped">
+        <table class="table-modern">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -78,34 +80,51 @@
 
 @section scripts {
     <script>
-    function aprobarReserva(id) {
-        $.ajax({
-            url: 'https://localhost:44398/api/reservas/aprobar/' + id,
-            type: 'PUT',
-            headers: { 'Authorization': 'Bearer @Session["Token"]' },
-            success: function() {
-                alert("Reserva aprobada");
-                location.reload();
-            },
-            error: function() {
-                alert("Error al aprobar la reserva");
-            }
-        });
+function mostrarAlerta(exito, mensaje) {
+    const alerta = $("#alertaResultado");
+    alerta.removeClass("exito error").hide();
+
+    if (exito) {
+        alerta.addClass("exito").text("✅ " + mensaje);
+    } else {
+        alerta.addClass("error").text("⚠️ " + mensaje);
     }
 
-    function rechazarReserva(id) {
-        $.ajax({
-            url: 'https://localhost:44398/api/reservas/rechazar/' + id,
-            type: 'PUT',
-            headers: { 'Authorization': 'Bearer @Session["Token"]' },
-            success: function() {
-                alert("Reserva rechazada");
-                location.reload();
-            },
-            error: function() {
-                alert("Error al rechazar la reserva");
-            }
-        });
-    }
+    alerta.fadeIn().delay(3000).fadeOut();
+}
+
+function aprobarReserva(id) {
+    $.ajax({
+        url: 'https://localhost:44398/api/reservas/aprobar/' + id,
+        type: 'PUT',
+        headers: { 'Authorization': 'Bearer @Session["Token"]' },
+        success: function() {
+            mostrarAlerta(true, "Reserva aprobada correctamente");
+            setTimeout(() => location.reload(), 1500);
+        },
+        error: function() {
+            mostrarAlerta(false, "Error al aprobar la reserva, ya existe una reserva existente para este espacio y horario");
+        }
+    });
+}
+
+function rechazarReserva(id) {
+    $.ajax({
+        url: 'https://localhost:44398/api/reservas/rechazar/' + id,
+        type: 'PUT',
+        headers: { 'Authorization': 'Bearer @Session["Token"]' },
+        success: function() {
+            mostrarAlerta(true, "Reserva rechazada correctamente");
+            setTimeout(() => location.reload(), 1500);
+        },
+        error: function() {
+            mostrarAlerta(false, "Error al rechazar la reserva");
+        }
+    });
+}
     </script>
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/PanelCoordinador.css" />
 }

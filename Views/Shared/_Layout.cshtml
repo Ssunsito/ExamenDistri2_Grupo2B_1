@@ -2,18 +2,17 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>@ViewBag.Title</title>
 
-    <!-- Bootstrap JS opcional si usas bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- CSS globales -->
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/site.css" />
+    <link rel="stylesheet" href="~/Content/Layout.css" />
 
+
+    @RenderSection("styles", required: false) <!-- 🔹 Aquí va -->
 </head>
-<body>
+<body class="@(ViewBag.BodyClass ?? "")">
     <header class="bg-dark text-white p-2 d-flex justify-content-between align-items-center">
         <div>
             <h4 class="m-0">Sistema de Reservas FIEE</h4>
@@ -21,9 +20,7 @@
         <div>
             @if (Session["UserName"] != null)
             {
-                <span class="me-3">
-                    👤 @Session["UserName"] (@Session["UserRole"])
-                </span>
+                <span class="me-3">👤 @Session["UserName"] (@Session["UserRole"])</span>
                 <a href="@Url.Action("Logout", "Account")" class="btn btn-sm btn-outline-light">
                     Cerrar Sesión
                 </a>
@@ -31,18 +28,19 @@
         </div>
     </header>
 
-    <main class="container mt-4">
+    <main class="@(ViewBag.BodyClass == "login-page" ? "" : "main-content")">
         @RenderBody()
     </main>
+
+
 
     <footer class="bg-dark text-white text-center py-2 mt-5">
         © @DateTime.Now.Year - ProyectoDistri2
     </footer>
 
-    <!-- Scripts generales -->
+    <!-- Scripts globales -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("scripts", required: false)
-</body>
-
+    </>
 </html>

@@ -1,6 +1,6 @@
 ﻿@model List<ProyectoDistri2.Models.Reserva>
 
-<table class="table table-bordered table-striped">
+<table class="table-modern">
     <thead>
         <tr>
             <th>ID</th>
@@ -18,23 +18,26 @@
                 <td>@(r.Espacio?.Nombre) (@(r.Espacio?.Tipo))</td>
                 <td>@r.FechaInicio.ToString("dd/MM/yyyy HH:mm")</td>
                 <td>@r.FechaFin.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@r.Estado</td>
+                <td class="estado-@r.Estado">@r.Estado</td>
             </tr>
         }
         @if (!Model.Any())
         {
-            <tr><td colspan="5" class="text-center text-muted">No hay reservas con los filtros seleccionados.</td></tr>
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No hay reservas con los filtros seleccionados.
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-
 
 <!-- 🔹 Paginación AJAX -->
 @if (ViewBag.TotalRegistros > ViewBag.PageSize)
 {
     int totalPaginas = (int)Math.Ceiling((decimal)ViewBag.TotalRegistros / ViewBag.PageSize);
-    <nav>
-        <ul class="pagination">
+    <nav class="pagination-container mt-3">
+        <ul class="pagination justify-content-center">
             @for (int i = 1; i <= totalPaginas; i++)
             {
                 <li class="page-item @(ViewBag.Page == i ? "active" : "")">

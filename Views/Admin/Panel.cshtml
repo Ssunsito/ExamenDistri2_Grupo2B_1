@@ -24,7 +24,7 @@
     <!-- 🔹 Reservas -->
     <div class="tab-pane fade show active" id="reservas" role="tabpanel">
         <h4>Gestión de Reservas</h4>
-        <table class="table table-bordered table-striped" id="tablaReservas">
+        <table class="table-modern" id="tablaReservas">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -41,7 +41,7 @@
                 {
                     <tr>
                         <td>@r.Id</td>
-                        <td>@(r.Usuario?.Nombre)</td> 
+                        <td>@(r.Usuario?.Nombre)</td>
                         <td>@(r.Espacio?.Nombre) (@(r.Espacio?.Tipo))</td>
                         <td>@r.FechaInicio.ToString("dd/MM/yyyy HH:mm")</td>
                         <td>@r.FechaFin.ToString("dd/MM/yyyy HH:mm")</td>
@@ -60,7 +60,7 @@
     <div class="tab-pane fade" id="espacios" role="tabpanel">
         <h4>Gestión de Espacios</h4>
         <button class="btn btn-primary mb-2" onclick="abrirCrearEspacio()">Crear Nuevo Espacio</button>
-        <table class="table table-bordered table-striped" id="tablaEspacios">
+        <table class="table-modern" id="tablaEspacios">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -90,7 +90,7 @@
     <div class="tab-pane fade" id="usuarios" role="tabpanel">
         <h4>Gestión de Usuarios</h4>
         <button class="btn btn-primary mb-2" onclick="abrirCrearUsuario()">Crear Usuario</button>
-        <table class="table table-bordered table-striped" id="tablaUsuarios">
+        <table class="table-modern" id="tablaUsuarios">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -336,4 +336,7 @@
     }
 
     </script>
+}
+@section styles {
+    <link rel="stylesheet" href="~/Content/PanelAdmin.css" />
 }

@@ -10,11 +10,12 @@
 {
     <div class="alert alert-danger">@ViewBag.Error</div>
 }
+
 <p>
     @Html.ActionLink("Mi Historial de Reservas", "Historial", "Reservas", null, new { @class = "btn btn-info" })
 </p>
 
-<table class="table table-bordered table-striped">
+<table class="table-modern">
     <thead>
         <tr>
             <th>Id</th>
@@ -32,13 +33,17 @@
                 <td>@espacio.Tipo</td>
                 <td>
                     @Html.ActionLink(
-                        "Reservar",       // Texto del botón
-                        "Crear",          // Acción
-                        new { espacioId = espacio.Id }, // Parámetro
-                        new { @class = "btn btn-primary" } // CSS
+                        "Reservar",
+                        "Crear",
+                        new { espacioId = espacio.Id },
+                        new { @class = "btn btn-primary" }
                     )
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/UsuarioIndex.css" />
+}

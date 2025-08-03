@@ -4,6 +4,15 @@
     var espacios = ViewBag.Espacios as List<ProyectoDistri2.Models.Espacio>;
 }
 
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        @Html.ActionLink("← Volver a Espacios", "Index", "Reservas", null, new { @class = "btn btn-secondary" })
+    </div>
+    <div>
+        @Html.ActionLink("➕ Nueva Reserva", "Index", "Reservas", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
 <h2>Historial de Reservas</h2>
 
 @if (ViewBag.Error != null)
@@ -83,4 +92,7 @@
         window.location.href = '@Url.Action("ExportarHistorialExcel", "Reservas")';
     });
     </script>
+}
+@section styles {
+    <link rel="stylesheet" href="~/Content/UsuarioHistorial.css" />
 }

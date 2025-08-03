@@ -1,0 +1,144 @@
+﻿/* ====== CONTENEDOR PRINCIPAL ====== */
+.main-content {
+    background-color: #f1f3f5;
+    padding: 40px 50px;
+    min-height: 80vh;
+}
+
+/* ====== TITULOS ====== */
+h2 {
+    text-align: center;
+    font-weight: 800;
+    color: #0d6efd;
+    margin-bottom: 25px;
+}
+
+h4 {
+    color: #0d6efd;
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+/* ====== NAV TABS ====== */
+.nav-tabs .nav-link {
+    color: #0d6efd;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+    .nav-tabs .nav-link.active {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .nav-tabs .nav-link:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+/* ====== TABLAS MODERNAS ====== */
+.table-modern {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+    .table-modern thead {
+        background: linear-gradient(90deg, #0d6efd, #6610f2);
+        color: white;
+        font-weight: 600;
+    }
+
+    .table-modern th,
+    .table-modern td {
+        text-align: center;
+        padding: 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.08);
+    }
+
+/* ====== BOTONES ====== */
+.btn {
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #dc3545;
+        transform: translateY(-2px);
+    }
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+    color: #212529;
+}
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        transform: translateY(-2px);
+    }
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+    .btn-danger:hover {
+        background-color: #b02a37;
+        transform: translateY(-2px);
+    }
+
+/* ====== MODAL CRUD ====== */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+/* ====== RESPONSIVIDAD ====== */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px;
+    }
+
+    .table-modern th,
+    .table-modern td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+    }
+}

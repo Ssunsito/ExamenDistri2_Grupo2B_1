@@ -1,0 +1,127 @@
+﻿/* Estilos generales */
+body {
+    background: linear-gradient(135deg, #0d6efd, #6610f2); /* Azul degradado */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+/* Para login-page, forzamos pantalla completa */
+body.login-page {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+    /* Ocultar header y footer completamente */
+    body.login-page header,
+    body.login-page footer {
+        display: none !important;
+    }
+
+/* Card centrada */
+.login-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Resto igual que antes */
+
+/* Contenedor del login */
+.login-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+    /* Título */
+    .login-card h2 {
+        text-align: center;
+        color: #0d6efd;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Inputs */
+    .login-card .form-group {
+        margin-bottom: 20px;
+    }
+
+    .login-card .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .login-card .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13,110,253,0.3);
+        }
+
+    /* Botón */
+    .login-card .btn-primary {
+        width: 100%;
+        background: #0d6efd;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+        .login-card .btn-primary:hover {
+            background: #dc3545; /* Rojo al pasar el mouse */
+            transform: scale(1.03);
+        }
+
+    /* Alertas de error */
+    .login-card .alert-danger {
+        text-align: center;
+        font-weight: bold;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsividad */
+@media (max-width: 500px) {
+    .login-card {
+        margin: 20px;
+        padding: 30px 20px;
+    }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+        }
+}
