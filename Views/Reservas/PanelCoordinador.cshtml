@@ -1,4 +1,27 @@
-﻿@model List<ProyectoDistri2.Models.Reserva>
+﻿<!-- *****************************************************
+Proyecto 2 - Reserva.co
+Vista PanelCoordinador.cshtml
+Kenneth Andrés Pantoja Manobanda
+Santiago Pila
+Fecha: 03/08/2025
+
+// RESULTADOS FINALES
+- Se implementó interfaz de usuario para coordinadores
+- Se integró gestión de reservas pendientes
+- Se implementó sistema de alertas dinámicas
+- Se estableció comunicación con API de reservas
+- Se centralizó la gestión de espacios
+
+// CONCLUSIONES
+1. La interfaz proporciona una gestión eficiente de reservas pendientes
+2. El sistema de alertas mejora la experiencia del usuario
+3. La integración con la API permite operaciones seguras
+4. La organización por pestañas facilita la navegación
+5. El manejo de sesiones asegura la seguridad de las operaciones
+
+************************************************* -->
+
+@model List<ProyectoDistri2.Models.Reserva>
 @{
     ViewBag.Title = "Panel Coordinador";
     var espacios = ViewBag.Espacios as List<ProyectoDistri2.Models.Espacio>;
@@ -8,7 +31,7 @@
 
 
 <div class="tab-content mt-3">
-    <!-- 🔹 Reservas Pendientes -->
+    <!-- Reservas Pendientes -->
     <div class="tab-pane fade show active" id="reservas" role="tabpanel">
         <table class="table-modern">
             <thead>
@@ -38,7 +61,9 @@
                 }
                 @if (!Model.Any())
                 {
-                    <tr><td colspan="6" class="text-center text-muted">No hay reservas pendientes</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No hay reservas pendientes</td>
+                    </tr>
                 }
             </tbody>
         </table>
@@ -46,7 +71,7 @@
         <div id="alertaResultado" class="alert-dinamica mt-3"></div>
     </div>
 
-    <!-- 🔹 Lista de Espacios -->
+    <!-- Lista de Espacios -->
     <div class="tab-pane fade" id="espacios" role="tabpanel">
         <table class="table-modern">
             <thead>

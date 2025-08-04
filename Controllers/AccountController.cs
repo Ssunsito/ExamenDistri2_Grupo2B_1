@@ -1,10 +1,30 @@
-﻿using System.Net.Http;
+﻿// *****************************************************
+// Proyecto Distri2 - Sistema de Gestión de Reservas
+// Controlador AccountController
+// Kenneth Pantoja 
+// Santiago Pila
+// Fecha: 03/08/2025
+//
+// RESULTADOS FINALES
+// - Se implementó sistema de autenticación JWT con tokens Bearer
+// - Se integró gestión de sesiones para almacenamiento de datos de usuario
+// - Se implementó redirección condicional basada en roles de usuario
+// - Se centralizó el manejo de errores de autenticación
+// - Se estableció comunicación segura con API de usuarios
+//
+// CONCLUSIONES
+// 1. La implementación de JWT proporciona una autenticación segura y escalable
+// 2. El manejo de sesiones permite mantener el estado del usuario de forma eficiente
+// 3. La gestión de roles asegura el acceso controlado a funcionalidades específicas
+// *************************************
+
+using Newtonsoft.Json;
+using ProyectoDistri2.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using ProyectoDistri2.Models;
-using System.Linq;
 
 namespace ProyectoDistri2.Controllers
 {
@@ -31,7 +51,7 @@ namespace ProyectoDistri2.Controllers
 
             using (var client = new HttpClient())
             {
-                // 🔹 Solicitud de token JWT
+                // Solicitud de token JWT
                 var form = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string,string>("grant_type", "password"),
@@ -47,7 +67,7 @@ namespace ProyectoDistri2.Controllers
                     return View();
                 }
 
-                // 🔹 Leer token JWT
+                // Leer token JWT
                 var json = await response.Content.ReadAsStringAsync();
                 dynamic tokenResponse = JsonConvert.DeserializeObject(json);
 
@@ -55,7 +75,7 @@ namespace ProyectoDistri2.Controllers
                 Session["Token"] = (string)tokenResponse.access_token;
                 Session["UserName"] = username;
 
-                // 🔹 Obtener usuario desde la API
+                // Obtener usuario desde la API
                 var user = await ObtenerUsuario(username);
                 if (user == null)
                 {
@@ -67,7 +87,7 @@ namespace ProyectoDistri2.Controllers
                 Session["UserId"] = user.Id;
                 Session["UserRole"] = user.Rol;
 
-                // 🔹 Redirección según rol
+                // Redirección según rol
                 switch (user.Rol)
                 {
                     case "Coordinador":
@@ -80,14 +100,14 @@ namespace ProyectoDistri2.Controllers
             }
         }
 
-        // 🔹 Logout
+        // Logout
         public ActionResult Logout()
         {
             Session.Clear();
             return RedirectToAction("Login");
         }
 
-        // 🔹 Obtener usuario desde la API
+        // Obtener usuario desde la API
         private async Task<Usuario> ObtenerUsuario(string username)
         {
             using (var client = new HttpClient())

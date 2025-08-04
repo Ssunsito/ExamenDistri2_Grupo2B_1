@@ -1,8 +1,9 @@
 ﻿// *****************************************************
-// Examen 2 – Clase Usuario
-// Kenneth Andrés Pantoja Manobanda
+// Proyecto 2 – Reserva.co
+// Modelo Clase Usuaerio
+// Kenneth Pantoja
 // Santiago Pila
-// Fecha: 30/07/2025
+// Fecha: 03/08/2025
 //
 // RESULTADOS
 // - Se creó la entidad Usuario con propiedades Id, Nombre y Rol.

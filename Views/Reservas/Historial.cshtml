@@ -1,4 +1,27 @@
-﻿@model List<ProyectoDistri2.Models.Reserva>
+﻿<!-- *****************************************************
+Proyecto Distri2 - Reserva.co
+Vista HistorialReservas.cshtml
+Kenneth Pantoja 
+Santiago Pila
+Fecha: 03/08/2025
+
+// RESULTADOS FINALES
+- Se implementó sistema de filtrado avanzado para historial de reservas
+- Se integró exportación a Excel para reportes
+- Se estableció paginación dinámica con AJAX
+- Se implementó sistema de filtros por fecha, estado y espacio
+- Se centralizó la gestión de historial de reservas
+
+// CONCLUSIONES
+1. El sistema de filtrado mejora la eficiencia en la búsqueda de reservas
+2. La exportación a Excel facilita la generación de reportes
+3. La paginación dinámica optimiza el rendimiento
+4. La interfaz de filtros permite una búsqueda precisa y flexible
+5. La integración con el sistema de reservas asegura la consistencia de datos
+    ***************************************************** -->
+
+
+@model List<ProyectoDistri2.Models.Reserva>
 @{
     ViewBag.Title = "Historial de Reservas";
     var espacios = ViewBag.Espacios as List<ProyectoDistri2.Models.Espacio>;
@@ -20,7 +43,7 @@
     <div class="alert alert-danger">@ViewBag.Error</div>
 }
 
-<!-- 🔹 Filtros de búsqueda -->
+<!-- Filtros de búsqueda -->
 <div class="mb-3">
     <label>Desde:</label>
     <input type="date" id="fechaInicio" class="form-control d-inline w-auto mx-2" />
@@ -49,14 +72,14 @@
     <button id="btnExportar" class="btn btn-success mx-2">Exportar a Excel</button>
 </div>
 
-<!-- 🔹 Contenedor dinámico para la tabla -->
+<!-- Contenedor dinámico para la tabla -->
 <div id="tablaHistorial">
     @Html.Partial("_HistorialTabla", Model)
 </div>
 
 @section scripts {
     <script>
-    // 🔹 Cargar historial vía AJAX
+    // Cargar historial vía AJAX
     function cargarHistorial(page = 1) {
         $.ajax({
             url: '@Url.Action("FiltrarHistorial", "Reservas")',
@@ -77,17 +100,17 @@
         });
     }
 
-    // 🔹 Evento click para el botón Filtrar
+    // Evento click para el botón Filtrar
     $("#btnFiltrar").click(function() {
         cargarHistorial(1); // Reiniciar en la primera página
     });
 
-    // 🔹 Llamado desde la paginación dinámica
+    // Llamado desde la paginación dinámica
     function cambiarPagina(page) {
         cargarHistorial(page);
     }
 
-    // 🔹 Exportar historial a Excel
+    // Exportar historial a Excel
     $("#btnExportar").click(function () {
         window.location.href = '@Url.Action("ExportarHistorialExcel", "Reservas")';
     });

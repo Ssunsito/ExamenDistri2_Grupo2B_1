@@ -1,6 +1,6 @@
 ﻿/* Estilos generales */
 body {
-    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    background: linear-gradient(90deg, blue, darkblue);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -11,7 +11,7 @@ body {
 
 /* Para login-page, forzamos pantalla completa */
 body.login-page {
-    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    background: linear-gradient(90deg, blue, darkblue);
     min-height: 100vh;
     display: flex;
     justify-content: center;

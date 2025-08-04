@@ -1,11 +1,33 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+﻿// *****************************************************
+// Proyecto 2 - Reserva.co
+// Controlador ReservasController
+// Kenneth Pantoja
+// Santiago Pila
+// Fecha: 03/08/2025
+//
+// RESULTADOS FINALES
+// - Se implementaron operaciones CRUD completas para gestión de reservas
+// - Se integró exportación a Excel para reportes
+// - Se implementó panel de coordinador con gestión de reservas pendientes
+// - Se agregó sistema de filtrado y paginación para historial
+// - Se centralizó el manejo de sesiones y autenticación
+//
+// CONCLUSIONES
+// 1. La implementación de operaciones CRUD proporciona una gestión completa de reservas
+// 2. La exportación a Excel facilita la generación de reportes administrativos
+// 3. El panel de coordinador permite una gestión eficiente de reservas pendientes
+// 4. El sistema de filtrado y paginación mejora la experiencia de usuario
+// 5. La centralización del manejo de sesiones asegura la consistencia de la autenticación
+// *************************************
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using ProyectoDistri2.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace ProyectoDistri2.Controllers
 {
@@ -96,7 +118,7 @@ namespace ProyectoDistri2.Controllers
         {
             if (Session["UserId"] == null)
             {
-                return RedirectToAction("Login", "Account"); // 🔹 Redirige al login
+                return RedirectToAction("Login", "Account"); // Redirige al login
             }
 
             int userId = (int)Session["UserId"];
@@ -109,7 +131,7 @@ namespace ProyectoDistri2.Controllers
         }
 
 
-        // 🔹 Acción parcial para filtros AJAX
+        // Acción parcial para filtros AJAX
         [HttpGet]
         public async Task<ActionResult> FiltrarHistorial(
              DateTime? fechaInicio,
@@ -216,7 +238,7 @@ namespace ProyectoDistri2.Controllers
 
         public async Task<ActionResult> PanelCoordinador()
         {
-            // 🔹 Validar rol
+            // Validar rol
             if ((string)Session["UserRole"] != "Coordinador" && (string)Session["UserRole"] != "Admin")
             {
                 return RedirectToAction("Login", "Account");

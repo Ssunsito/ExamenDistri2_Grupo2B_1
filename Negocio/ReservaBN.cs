@@ -1,9 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data.Entity;
+﻿// *****************************************************
+// Proyecto 2 - Reserva.co
+// Capa de Negocio - ReservaBN
+// Kenneth Pantoja
+// Santiago Pila
+// Fecha: 03/08/2025
+//
+// RESULTADOS FINALES
+// - Se implementaron consultas eficientes para diferentes periodos temporales
+// - Se integró manejo de relaciones entre reservas, usuarios y espacios
+// - Se implementó sistema de filtrado flexible y dinámico
+// - Se optimizó el rendimiento con consultas LINQ
+// - Se centralizó la lógica de negocio de reservas
+//
+// CONCLUSIONES
+// 1. La implementación de consultas por periodos proporciona una gestión temporal eficiente
+// 2. El manejo de relaciones mejora la integridad de los datos consultados
+// 3. El sistema de filtrado permite búsquedas flexibles y precisas
+// 4. La estructura de la capa de negocio facilita el mantenimiento y extensión
+// 5. Las consultas optimizadas garantizan un rendimiento adecuado
+// *************************************
+
 using ProyectoDistri2.DAL;
 using ProyectoDistri2.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 
 namespace ProyectoDistri2.Negocio
 {

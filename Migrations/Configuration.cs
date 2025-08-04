@@ -1,11 +1,31 @@
-﻿namespace ProyectoDistri2.Migrations
+﻿// *****************************************************
+// Proyecto 2 - Reserva.co
+// Configuración de Migraciones
+// Kenneth Pantoja
+// Santiago Pila
+// Fecha: 03/08/2025
+//
+// RESULTADOS FINALES
+// - Se implementó configuración de migraciones con Entity Framework Core
+// - Se estableció proceso de inicialización de datos para desarrollo
+// - Se configuró limpieza y reseeding de tablas
+// - Se implementó estructura de datos para usuarios, espacios y reservas
+// - Se establecieron relaciones entre entidades
+//
+// CONCLUSIONES
+// 1. La configuración de migraciones permite un control preciso sobre la evolución del esquema
+// 2. El proceso de seeding facilita la inicialización del sistema en diferentes entornos
+// 3. La estructura de datos implementada soporta las relaciones necesarias entre usuarios, espacios y reservas
+// 4. El manejo de estados de reserva permite un control efectivo del sistema
+// 5. La organización del código facilita su mantenimiento y extensión
+// *************************************
+
+namespace ProyectoDistri2.Migrations
 {
     using ProyectoDistri2.Models;
     using System;
     using System.Collections.Generic;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<ProyectoDistri2.DAL.GestorReserva>
     {

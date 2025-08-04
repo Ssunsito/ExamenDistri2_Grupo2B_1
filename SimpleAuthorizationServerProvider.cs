@@ -1,8 +1,31 @@
-﻿using Microsoft.Owin.Security.OAuth;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿/* *****************************************************
+Proyecto Distri2 - Reserva.co
+Archivo SimpleAuthorizationServerProvider.cs
+Kenneth Andrés Pantoja Manobanda
+Santiago Pila
+Fecha: 03 / 08 / 2025
+
+// RESULTADOS FINALES
+- Se implementó proveedor de autenticación OAuth personalizado
+- Se integró validación de credenciales de usuario
+- Se estableció gestión de claims para identidad
+- Se implementó manejo de errores de autenticación
+- Se centralizó la autenticación de recursos propietarios
+
+// CONCLUSIONES
+1. El proveedor proporciona una autenticación segura y eficiente
+2. La gestión de claims permite una identificación precisa de usuarios
+3. El sistema de validación mejora la seguridad del sistema
+4. La integración con la base de datos optimiza el acceso a datos
+5. La estructura del código facilita el mantenimiento y extensión
+*********************************************************************** */
+
+
+using Microsoft.Owin.Security.OAuth;
 using ProyectoDistri2.DAL;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 public class SimpleAuthorizationServerProvider : OAuthAuthorizationServerProvider
 {

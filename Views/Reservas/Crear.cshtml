@@ -1,4 +1,26 @@
-﻿@model ProyectoDistri2.Models.Reserva
+﻿<!-- *****************************************************
+Proyecto Distri2 - Reserva.co
+Vista CrearReserva.cshtml
+Kenneth Andrés Pantoja Manobanda
+Santiago Pila
+Fecha: 03/08/2025
+
+// RESULTADOS FINALES
+- Se implementó formulario de creación de reservas con validación
+- Se integró sistema de selección de fechas con datetime-local
+- Se estableció envío de formulario mediante AJAX
+- Se implementó sistema de alertas dinámicas con animaciones
+- Se centralizó la gestión de reservas por espacio
+
+// CONCLUSIONES
+1. La interfaz proporciona una experiencia fluida para crear reservas
+2. El sistema de validación mejora la calidad de los datos ingresados
+3. La integración AJAX optimiza la experiencia del usuario
+4. El sistema de alertas dinámicas mejora la retroalimentación
+5. La estructura del formulario facilita la creación de reservas
+    ***************************************************** -->
+
+@model ProyectoDistri2.Models.Reserva
 
 @{
     ViewBag.Title = "Crear Reserva";
@@ -26,7 +48,7 @@
         <button type="submit" class="btn btn-success mt-2">Guardar Reserva</button>
         @Html.ActionLink("Volver a Espacios", "Index", null, new { @class = "btn btn-secondary mt-2 ms-2" })
 
-        <!-- 🔹 Alerta dinámica con icono -->
+        <!-- Alerta dinámica con icono -->
         <div id="alertaResultado" class="alert-dinamica" style="display:none;">
             <div class="icono-alerta"></div>
             <span class="mensaje-alerta"></span>

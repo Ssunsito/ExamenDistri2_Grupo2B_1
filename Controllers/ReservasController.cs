@@ -1,32 +1,32 @@
 ﻿// *****************************************************
-// Examen2 – Controlador ReservasController
-// Kenneth Andrés Pantoja Manobanda
+// Proyecto 2 – Reserva.co
+// Controlador ReservasController
+// Kenneth Pantoja
 // Santiago Pila
-// Fecha: 30/07/2025
+// Fecha: 03/08/2025
 //
-// RESULTADOS
-// - Implementa endpoints para consultar, filtrar, crear y gestionar reservas.
-// - Incluye autorización por roles para rutas críticas.
-// - Manejo de excepciones centralizado con SafeExecute.
-// - Validación de conflicto para creación y edición de reservas.
-// 
+// RESULTADOS FINALES
+// - Se implementaron endpoints REST para consultar, filtrar, crear, editar, aprobar, rechazar y eliminar reservas.
+// - Se integró autorización basada en roles para proteger operaciones críticas y acceso a historial.
+// - Se centralizó el manejo de excepciones y la validación de conflictos de reservas para robustez y consistencia.
+//
 // CONCLUSIONES
-// - Centraliza la lógica de acceso a reservas vía Web API.
-// - Facilita la integración de la capa de negocio con la capa de presentación.
-// - Mejora la robustez y mantiene consistencia en respuestas JSON.
+// 1. La centralización de la lógica de reservas en el controlador facilita el mantenimiento y la escalabilidad.
+// 2. El uso de SafeExecute mejora la robustez y la experiencia del usuario al manejar errores de forma uniforme.
+// 3. La validación de conflictos y la autorización por roles aseguran integridad y seguridad en la gestión de reservas.
 // *****************************************************
 
-using System;
-using System.Web.Http;
-using System.Data.Entity;
-using ProyectoDistri2.Negocio;
 using ClosedXML.Excel;
-using System.IO;
-using System.Net.Http;
-using System.Net;
 using ProyectoDistri2.DAL;
 using ProyectoDistri2.Models;
+using ProyectoDistri2.Negocio;
+using System;
+using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
 namespace ProyectoDistri2.WebAPI.Controllers
 {
@@ -36,7 +36,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
         private readonly ReservaBN service = new ReservaBN();
         private readonly GestorReserva db = new GestorReserva();
 
-        // 🔹 Método auxiliar para manejo de excepciones
+        // Método auxiliar para manejo de excepciones
         private IHttpActionResult SafeExecute(Func<IHttpActionResult> action)
         {
             try
@@ -61,7 +61,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
             }
         }
 
-        // -------------------- 🔹 CONSULTAS --------------------
+        // -------------------- CONSULTAS --------------------
 
         [HttpGet]
         [Route("dia")]
@@ -93,7 +93,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
                 .Include(r => r.Espacio)
                 .ToList()));
 
-        // 🔹 Obtener reserva por ID (para modales)
+        // Obtener reserva por ID (para modales)
         [HttpGet]
         [Authorize(Roles = "Admin,Coordinador")]
         [Route("{id:int}")]
@@ -108,7 +108,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
                 return Ok(reserva);
             });
 
-        // -------------------- 🔹 EXPORTACIÓN --------------------
+        // -------------------- EXPORTACIÓN --------------------
 
         [HttpGet]
         [Authorize(Roles = "Admin,Coordinador")]
@@ -164,7 +164,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
             }
         }
 
-        // -------------------- 🔹 CRUD DE RESERVAS --------------------
+        // -------------------- CRUD DE RESERVAS --------------------
 
         [HttpPost]
         [Route("")]
@@ -224,7 +224,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
                         detalle = "No se puede guardar la reserva: existe otra reserva aprobada en el mismo horario y espacio."
                     });
 
-                // 🔹 Actualizar datos
+                // Actualizar datos
                 reservaExistente.EspacioId = reserva.EspacioId;
                 reservaExistente.FechaInicio = reserva.FechaInicio;
                 reservaExistente.FechaFin = reserva.FechaFin;
@@ -289,7 +289,7 @@ namespace ProyectoDistri2.WebAPI.Controllers
                 return Ok(reserva);
             });
 
-        // -------------------- 🔹 HISTORIAL --------------------
+        // -------------------- HISTORIAL --------------------
 
         [HttpGet]
         [Authorize]

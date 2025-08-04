@@ -1,4 +1,27 @@
-﻿<!DOCTYPE html>
+﻿<!-- *****************************************************
+Proyecto Distri2 - Reserva.co
+Vista _Layout.cshtml
+Kenneth Pantoja
+Santiago Pila
+Fecha: 03/08/2025
+
+// RESULTADOS FINALES
+- Se implementó estructura base de la aplicación con Bootstrap
+- Se integró sistema de gestión de sesiones en el encabezado
+- Se estableció manejo de estilos y scripts personalizados
+- Se implementó diseño responsivo con clases condicionales
+- Se centralizó la gestión de recursos estáticos
+
+// CONCLUSIONES
+1. El layout proporciona una base sólida para todas las vistas
+2. La gestión de sesiones mejora la experiencia del usuario
+3. El sistema de estilos y scripts optimiza el rendimiento
+4. El diseño responsivo asegura la compatibilidad multiplataforma
+5. La estructura modular facilita el mantenimiento del código
+    ***************************************************** -->
+
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -10,7 +33,7 @@
     <link rel="stylesheet" href="~/Content/Layout.css" />
 
 
-    @RenderSection("styles", required: false) <!-- 🔹 Aquí va -->
+    @RenderSection("styles", required: false)
 </head>
 <body class="@(ViewBag.BodyClass ?? "")">
     <header class="bg-dark text-white p-2 d-flex justify-content-between align-items-center">
